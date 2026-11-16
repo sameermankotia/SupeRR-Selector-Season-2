@@ -1,0 +1,25 @@
+# Virtualenv
+.venv/
+__pycache__/
+*.pyc
+
+# Competition-supplied data - not redistributed.
+# Place the downloaded data pack here to run the pipeline.
+Data Pack/
+
+# Generated output: reconstructed ball data, ratings, diagnostics, figures.
+# Everything here is rebuilt by running the pipeline.
+out/*
+!out/.gitkeep
+figs/*
+!figs/.gitkeep
+
+# Write-up stage: contains findings and named selections, kept local.
+pipeline/report_pdf.py
+
+# Submission documents
+*.pdf
+*.pptx
+*.docx
+
+.DS_Store
