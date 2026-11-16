@@ -50,11 +50,21 @@ A component that does not replicate collapses toward the league mean on its own 
 
 The same measurement sets the per-side rating weights in `WEIGHTS` — re-measure before changing them, and do not carry them to another dataset.
 
+### Auction relevance, not just performance
+
+Two filters apply that a pure performance ranking misses, and both are part of the model rather than a post-hoc edit:
+
+- **Players who cannot be signed.** Boards whose players are ineligible for the target competition are excluded outright — however well someone rates, an unsignable player is not an actionable recommendation.
+- **Players with almost no evidence in the target competition.** A rating built almost entirely on international cricket is an extrapolation into a franchise league, often against materially weaker attacks. `MIN_IPL_PRESS_BALLS` sets a floor on pressure deliveries in the target competition itself. The floor is deliberately not tuned: check that a range of values produces the same outcome before trusting it, and treat sensitivity to the exact number as a warning sign.
+
+Both filters are applied before the rankings are read, and the run reports who they removed and why.
+
 ## Validation built into the pipeline
 
 The pressure definition is tested before it is used for anything. `pressure.py` reports:
 
 - **Outcome gradients across pressure deciles** — runs per wicket, dismissal rate, runs conceded per ball, balls per wicket. Note that raw strike rate is the *wrong* test for batting pressure: under a squeeze batters attempt more, so scoring rate rises even as the situation gets harder. The honest signals are risk-adjusted.
+- **Per-player splits** — `player_cards.py` reports each ranked player against their own baseline on strike rate, boundary and dot rate, survival, phase mix, pace-versus-spin, and share of evidence from the target competition. Raw economy in particular is confounded by phase: a bowler who works mostly at the death will show a worse pressure economy than his own baseline while still being strongly positive against expectation for the states he bowls in.
 - **A within-player paired test** — each player against his own non-pressure baseline, with a Wilcoxon signed-rank test. Comparing a player to himself removes every player-quality confound.
 - **Independence of the two indices** — the correlation between batting and bowling pressure, and the share of deliveries flagged for both.
 
@@ -82,6 +92,7 @@ These are the choices that stop the numbers being optimistic:
 | `pipeline/win_prob.py` | Win-probability, ball-outcome and leverage models, with calibration diagnostics |
 | `pipeline/pressure.py` | The two pressure indices plus the validation suite |
 | `pipeline/ratings.py` | Value components, reliability calibration, shrinkage, bootstrap |
+| `pipeline/player_cards.py` | Per-player pressure evidence and squad-gap profiling for a named franchise |
 | `pipeline/charts.py` | Figures |
 
 Each stage writes to `out/` and reads the previous stage's output, so any stage can be re-run alone.
@@ -109,6 +120,7 @@ mkdir -p out figs
 .venv/bin/python pipeline/win_prob.py   out/state.csv out
 .venv/bin/python pipeline/pressure.py   out/balls_enriched.csv out
 .venv/bin/python pipeline/ratings.py    out/balls_pressure.csv out/state.csv out
+.venv/bin/python pipeline/player_cards.py out "Data Pack" out/player_cards.json
 .venv/bin/python pipeline/charts.py     out figs
 ```
 

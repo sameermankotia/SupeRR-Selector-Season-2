@@ -51,6 +51,20 @@ MIN_PRESS_BALLS = 250          # raised: reliability roughly doubles 150 -> 300
 MIN_BASE_BALLS = 250
 MIN_MATCHES = 15
 RECENT_SEASONS = {2025, 2026}
+
+# --- auction-relevance filters -------------------------------------------
+# The task is an IPL auction, so two constraints apply that pure performance
+# ranking misses.
+#
+# 1. Players from these boards cannot be signed at an IPL auction at all, so a
+#    ranking that lists them is not actionable however well they rate.
+INELIGIBLE_NATIONS = {"Pakistan"}
+# 2. A rating whose evidence is almost entirely from T20Is is an extrapolation
+#    into the target competition. Require a minimum pressure sample in the IPL
+#    itself. The exact floor is not load-bearing: anything from 50 to 150
+#    produces the same changes to the top ten, which is why this is a filter
+#    and not a tuned parameter.
+MIN_IPL_PRESS_BALLS = 100
 N_BOOT = 400
 N_REL_REP = 60
 
@@ -121,7 +135,16 @@ def calibrated_shrink(rate, w, r_half):
     return mu + shrink * (rate - mu), shrink, r_full
 
 
-def main(balls_csv, state_csv, out_dir):
+def nationality(pack_dir):
+    """Most-represented national side per player, from T20I squads."""
+    mp = pd.read_csv(os.path.join(pack_dir, "competition_team_player_mapping.csv"))
+    cp = pd.read_csv(os.path.join(pack_dir, "competitions.csv"))
+    t20i = set(cp[cp["match_format"] == "T20I"]["comp_id"])
+    return (mp[mp["comp_id"].isin(t20i)]
+            .groupby("player_id")["team_name"].agg(lambda s: s.mode().iat[0]))
+
+
+def main(balls_csv, state_csv, out_dir, pack_dir="Data Pack"):
     df = pd.read_csv(balls_csv, low_memory=False)
     print(f"loaded {len(df):,} deliveries")
     assert df["ball_uid"].is_unique
@@ -172,6 +195,7 @@ def main(balls_csv, state_csv, out_dir):
     df["w_bowl"] = df["rec_w"] * df["comp_w"] * df["batting_team_id"].map(tstr).fillna(0.75)
 
     legal = df["is_legal"] == 1
+    nat = nationality(pack_dir)
     out, diag = {}, {}
 
     for side in ("bat", "bowl"):
@@ -214,10 +238,29 @@ def main(balls_csv, state_csv, out_dir):
                 tab[f"{nm}_{c}"] = piv[(c, b)] / piv[("w", b)].replace(0, np.nan)
         tab["active"] = (d.groupby(idc)["season_yr"].agg(set)
                           .apply(lambda s: bool(s & RECENT_SEASONS)))
+        tab["nation"] = pd.Series(tab.index, index=tab.index).map(nat).fillna("unknown")
+        tab["ipl_press_balls"] = (d[d[flag] == 1].groupby(idc)["is_ipl"].sum()
+                                  .reindex(tab.index).fillna(0))
+        tab["auction_eligible"] = ~tab["nation"].isin(INELIGIBLE_NATIONS)
 
-        elig = ((tab["press_balls"] >= MIN_PRESS_BALLS)
-                & (tab["base_balls"] >= MIN_BASE_BALLS)
-                & (tab["matches"] >= MIN_MATCHES) & tab["active"])
+        base_elig = ((tab["press_balls"] >= MIN_PRESS_BALLS)
+                     & (tab["base_balls"] >= MIN_BASE_BALLS)
+                     & (tab["matches"] >= MIN_MATCHES) & tab["active"])
+        blocked = tab[base_elig & ~tab["auction_eligible"]]
+        thin = tab[base_elig & tab["auction_eligible"]
+                   & (tab["ipl_press_balls"] < MIN_IPL_PRESS_BALLS)]
+        if len(blocked):
+            print(f"  excluded, cannot be signed at an IPL auction: "
+                  f"{', '.join(blocked['name'].tolist())}")
+        if len(thin):
+            print(f"  excluded, under {MIN_IPL_PRESS_BALLS} IPL pressure balls: "
+                  + ", ".join(f"{r['name']} ({int(r.ipl_press_balls)})"
+                              for _, r in thin.sort_values('ipl_press_balls',
+                                                           ascending=False).head(8).iterrows())
+                  + (f" and {len(thin)-8} more" if len(thin) > 8 else ""))
+
+        elig = (base_elig & tab["auction_eligible"]
+                & (tab["ipl_press_balls"] >= MIN_IPL_PRESS_BALLS))
         e = tab[elig].copy()
         print(f"  candidates {len(tab)} -> eligible {len(e)} "
               f"(>={MIN_PRESS_BALLS} pressure balls, >={MIN_MATCHES} matches, active 2025/26)")
@@ -356,4 +399,4 @@ def main(balls_csv, state_csv, out_dir):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2], sys.argv[3])
+    main(*sys.argv[1:5])

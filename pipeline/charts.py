@@ -259,6 +259,55 @@ def fig_share(out, figs):
     save(fig, os.path.join(figs, "fig6_share.png"))
 
 
+# ---------------------------------------------------------------- 7. RR squad gap
+def fig_rr_gap(out, figs):
+    """Pool as a jittered strip up top; RR players get named axis rows, so
+    their labels cannot collide however tightly their values cluster."""
+    import json
+    pc = json.load(open(os.path.join(out, "player_cards.json")))
+    fig, axes = plt.subplots(1, 2, figsize=(10.4, 4.6))
+    rng = np.random.default_rng(3)
+    for ax, side, label in ((axes[0], "batters", "Batters"),
+                            (axes[1], "bowlers", "Bowlers")):
+        r = pd.read_csv(os.path.join(out,
+              "ratings_bat.csv" if side == "batters" else "ratings_bowl.csv"))
+        rr = sorted(pc[f"rr_{side}"], key=lambda x: -x["press_value"])
+        n = len(rr)
+        strip_y = n + 0.9
+        isrr = r["name"].isin({x["name"] for x in rr}).values
+        ax.scatter(r["press_value"][~isrr],
+                   strip_y + rng.normal(0, .14, (~isrr).sum()),
+                   s=26, color=MUTED, alpha=.45, linewidths=0, zorder=3)
+        ax.text(r["press_value"].min(), strip_y + 0.62,
+                f"all {len(r)} eligible players", fontsize=7.6, color=MUTED)
+        for i, x in enumerate(rr):
+            yy = n - 1 - i
+            ax.hlines(yy, r["press_value"].min(), x["press_value"],
+                      color=NEUTRAL, lw=1.2, zorder=2)
+            ax.scatter([x["press_value"]], [yy], s=86, color=ORANGE, zorder=5,
+                       edgecolor=SURFACE, linewidth=1.5)
+            ax.annotate(f"{int(x['rank'])}/{x['of']}", (x["press_value"], yy),
+                        textcoords="offset points", xytext=(10, -3),
+                        fontsize=7.4, color=INK2, fontweight="700")
+        ax.set_yticks(list(range(n)) + [strip_y])
+        ax.set_yticklabels([x["name"] for x in rr][::-1] + [""], fontsize=8.4)
+        ax.tick_params(axis="y", length=0)
+        ax.set_ylim(-0.9, strip_y + 1.1)
+        style(ax, f"{label}: RR squad vs the market",
+              "Pressure performance (shrunk value, runs/ball)", None, xgrid=True)
+        ax.spines["left"].set_visible(False)
+        ax.margins(x=0.13)
+    fig.suptitle("RR's current pressure coverage, and the gap to the top of the market",
+                 x=0.005, ha="left", fontsize=12, fontweight="700", color=INK)
+    fig.text(0.005, -0.01, "Orange: RR's IPL 2026 squad members who clear the "
+             "eligibility threshold. Labels give their rank within the pool.",
+             fontsize=7.8, color=MUTED)
+    fig.tight_layout(pad=1.1, rect=(0, 0.01, 1, .93))
+    fig.savefig(os.path.join(figs, "fig7_rr_gap.png"), bbox_inches="tight")
+    plt.close(fig)
+    print("  wrote fig7_rr_gap.png")
+
+
 def main(out, figs):
     os.makedirs(figs, exist_ok=True)
     print("building figures...")
@@ -269,6 +318,7 @@ def main(out, figs):
     fig_quadrant(out, figs, "bat", "Batters")
     fig_quadrant(out, figs, "bowl", "Bowlers")
     fig_top10(out, figs)
+    fig_rr_gap(out, figs)
     print("done")
 
 
