@@ -1,0 +1,41 @@
+{
+  "_source": "IPL 2027 retention and release lists as reported 17 Nov 2026 by Yahoo Sports (sports.yahoo.com/articles/ipl-2027-retention-list-full-210600876.html) and M9 News (m9.news/sports/ipl-2027-retained-released-players-auction-purse/). India TV returned HTTP 403 and could not be read. Auction reported by M9 as 16 December 2026, Goa.",
+  "_caveat": "Lists can still change through trades and late withdrawals. Where the two sources disagreed the player is marked disputed.",
+  "_as_of": "2026-11-17",
+  "purse_cr": {"CSK":28.05,"MI":32.60,"RCB":14.15,"KKR":41.65,"SRH":40.15,
+               "RR":27.05,"DC":39.50,"PBKS":18.60,"GT":8.75,"LSG":47.45},
+  "slots": {"CSK":6,"MI":9,"RCB":5,"KKR":8,"SRH":null,"RR":6,"DC":9,"PBKS":6,"GT":3,"LSG":7},
+  "overseas_slots": {"CSK":2,"MI":2,"RCB":1,"KKR":3,"SRH":null,"RR":3,"DC":4,"PBKS":2,"GT":2,"LSG":3},
+  "released": {
+    "KKR": ["Matheesha Pathirana","Mustafizur Rahman","Rachin Ravindra","Ajinkya Rahane","Akash Deep","Blessing Muzarabani","Navdeep Saini","Rahul Tripathi","Umran Malik"],
+    "MI": ["Trent Boult","Deepak Chahar","Keshav Maharaj","Mayank Markande","Mahipal Lomror"],
+    "DC": ["Mitchell Starc","Nitish Rana","Abhishek Porel","Pathum Nissanka","Ben Duckett","Karun Nair","Dushmantha Chameera","Rehan Ahmed"],
+    "LSG": ["Avesh Khan","Anrich Nortje","Wanindu Hasaranga","Matthew Breetzke","George Linde","Naman Tiwari","Arshin Kulkarni"],
+    "SRH": ["Travis Head","Gerald Coetzee","David Payne","Jaydev Unadkat","Shivam Mavi","Kamindu Mendis","Dilshan Madushanka"],
+    "CSK": ["Matt Henry","Matt Short","Zak Foulkes","Prashant Veer","Akash Madhwal","Aman Khan","Spencer Johnson"],
+    "GT": ["Shahrukh Khan","Ishant Sharma","Luke Wood","Kulwant Khejroliya"],
+    "PBKS": ["Nehal Wadhera","Mitchell Owen","Lockie Ferguson","Praveen Dubey"],
+    "RCB": ["Jacob Bethell","Richard Gleeson","Swapnil Singh"],
+    "RR": ["Tushar Deshpande","Adam Milne","Kuldeep Sen","Yudhvir Singh","Kwena Maphaka","Vignesh Puthur","Shimron Hetmyer","Ravi Singh","Emanjot Singh Chahal"]
+  },
+  "retained": {
+    "MI": ["Jasprit Bumrah","Tilak Varma","Suryakumar Yadav","Rohit Sharma","Mitchell Santner","Naman Dhir","Quinton de Kock","Ryan Rickelton","Shardul Thakur","Sherfane Rutherford","Will Jacks","Corbin Bosch","Arshdeep Singh","Ashwani Kumar"],
+    "KKR": ["Sunil Narine","Rinku Singh","Rovman Powell","Varun Chakaravarthy","Harshit Rana","Cameron Green","Angkrish Raghuvanshi","Ramandeep Singh","Finn Allen","Vaibhav Arora","Tim Seifert","Manish Pandey","Anukul Roy"],
+    "DC": ["KL Rahul","Axar Patel","David Miller","Lungi Ngidi","Rishabh Pant","Tristan Stubbs","Mitchell Marsh","Mukesh Kumar","Prithvi Shaw","Kyle Jamieson","Ashutosh Sharma","Vipraj Nigam","Sameer Rizvi","Zeeshan Ansari"],
+    "RCB": ["Virat Kohli","Tim David","Venkatesh Iyer","Bhuvneshwar Kumar","Krunal Pandya","Rajat Patidar","Phil Salt","Jitesh Sharma","Josh Hazlewood","Yash Dayal","Devdutt Padikkal","Romario Shepherd","Nuwan Thushara","Suyash Sharma","Jacob Duffy"],
+    "GT": ["Shubman Gill","Rashid Khan","Kagiso Rabada","Sai Sudharsan","Jos Buttler","Mohammed Siraj","Washington Sundar","Prasidh Krishna","R Sai Kishore","Rahul Tewatia","Jason Holder","Glenn Phillips","Harshal Patel","Jayant Yadav","Tom Banton","Anuj Rawat"],
+    "PBKS": ["Shreyas Iyer","Marcus Stoinis","Hardik Pandya","Marco Jansen","Yuzvendra Chahal","Shashank Singh","Prabhsimran Singh","Harpreet Brar","Priyansh Arya","Azmatullah Omarzai","Ben Dwarshuis","Xavier Bartlett","Vyshak Vijaykumar"],
+    "LSG": ["Nicholas Pooran","Aiden Markram","Ayush Badoni","Mitchell Marsh","Abdul Samad","Digvesh Rathi","Josh Inglis","Kuldeep Yadav","Sam Curran","Mayank Yadav","Shahbaz Ahmed","Mohsin Khan","Prince Yadav"],
+    "SRH": ["Pat Cummins","Abhishek Sharma","Heinrich Klaasen","Ishan Kishan","Nitish Kumar Reddy","Aniket Verma","Brydon Carse","Harsh Dubey","Eshan Malinga","Shivang Kumar"],
+    "CSK": ["Ruturaj Gaikwad","Sanju Samson","Dewald Brevis","Shivam Dube","Noor Ahmad","Sarfaraz Khan","Ayush Mhatre","Urvil Patel","Akeal Hosein","Jamie Overton","Anshul Kamboj","Rahul Chahar","Shreyas Gopal","Mukesh Choudhary"],
+    "RR": ["Riyan Parag","Yashasvi Jaiswal","Vaibhav Sooryavanshi","Ravindra Jadeja","Dhruv Jurel","Jofra Archer","Ravi Bishnoi","Sandeep Sharma","Dasun Shanaka","Donovan Ferreira","Nandre Burger","Shubham Dubey","Lhuan-dre Pretorius","Sushant Mishra","Yash Punja","Aman Rao Perala","Brijesh Sharma"]
+  },
+  "disputed": {
+    "Mohammed Shami": "M9 lists him retained by RR; Yahoo does not mention him",
+    "M Siddharth": "M9 lists him retained by RR; Yahoo does not mention him",
+    "Hardik Pandya": "Yahoo shows him traded out of MI to PBKS; M9 shows him retained by PBKS",
+    "MS Dhoni": "M9 lists him as retired; Yahoo does not mention",
+    "Travis Head": "released by SRH; M9 reports he will skip the season"
+  },
+  "unlisted_note": "Players appearing in neither list for any franchise (e.g. Andre Russell) had no IPL 2026 contract and are treated as available but unconfirmed."
+}
