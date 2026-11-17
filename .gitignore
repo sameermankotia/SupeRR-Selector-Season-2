@@ -17,6 +17,10 @@ figs/*
 # Write-up stage: contains findings and named selections, kept local.
 pipeline/report_pdf.py
 
+# Built dashboard: carries the full rankings and player results. It is
+# published from its own repository, never from this one.
+site/
+
 # Submission documents
 *.pdf
 *.pptx
